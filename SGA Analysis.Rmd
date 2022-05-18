@@ -72,7 +72,8 @@ for (a in 1:ncol(raw_data_clean)) {
  }
 }
 options(dplyr.width = Inf)
-raw_data_clean
+raw_data_clean_t <- add_column(raw_data_clean, Time = c(1,2,3,4), .before = 1)
+kable(raw_data_clean_t, caption = "Serum Growth Assay for GN02290")
 ```
 
 ```{r time}
