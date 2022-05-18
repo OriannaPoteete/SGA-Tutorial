@@ -94,10 +94,8 @@ for (a in 1:ncol(raw_data_clean)) {
  }
 }
 options(dplyr.width = Inf)
-raw_data_clean
-raw_data_clean_display <- raw_data_clean
-raw_data_clean_display <- add_column(raw_data_clean_display, Timepoint = c(1, 2, 3, 4), .before = 1)
-kable(raw_data_clean_display)
+raw_data_clean_t <- add_column(raw_data_clean, Time = c(1,2,3,4), .before = 1)
+kable(raw_data_clean_t, caption = "Serum Growth Assay for GN02290")
 ```
 
 #Transforming the Data
@@ -144,7 +142,8 @@ hi_plot <- trans_data %>%
 
 figure_1 <- ggarrange(zero_plot, fifty_plot, hi_plot,
                     labels = c("A", "B", "C"),
-                    ncol = 2, nrow = 2)
-figure_1
+                    ncol = 2, nrow = 2, common.legend = TRUE,legend="bottom")
+annotate_figure(figure_1, top = text_grob("Serum Growth Assay for GN02290", 
+               color = "black", face = "bold", size = 14))
 ```
 
