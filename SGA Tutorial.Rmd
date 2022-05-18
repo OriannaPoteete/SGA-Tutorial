@@ -30,7 +30,7 @@ library(knitr)
 ## Importing Data from Excel
 
 ```{r read file}
-raw_data <- read_excel(file.choose(), sheet = "Raw")
+raw_data <- read_excel(file.choose(), sheet = "Sheet1")
 ```
 
 ## Identifying Special Characters in Column Names
@@ -95,6 +95,14 @@ for (a in 1:ncol(raw_data_clean)) {
 }
 options(dplyr.width = Inf)
 raw_data_clean_t <- add_column(raw_data_clean, Time = c(1,2,3,4), .before = 1)
+
+# if (length(i <- grep("del", colnames(raw_data_clean_t)))) {
+#  delta_replace <- gsub("del", "\u0394", colnames(raw_data_clean_t))
+# }
+# if (length(i <- grep("del", colnames(raw_data_clean_t)))) {
+#   colnames(raw_data_clean_t) <- delta_replace
+# }
+
 kable(raw_data_clean_t, caption = "Serum Growth Assay for GN02290")
 ```
 
@@ -150,4 +158,3 @@ figure_1 <- ggarrange(zero_plot, fifty_plot, hi_plot,
 annotate_figure(figure_1, top = text_grob("Serum Growth Assay for GN02290", 
                color = "black", face = "bold", size = 14))
 ```
-
