@@ -55,7 +55,7 @@ raw_data_clean <- raw_data_colnames %>%
   select(-`0% (Blank)`, -`50% (Blank)`, -`HI-50% (Blank)`, -`Time`)
 ```
 
-## Clean Data
+# Clean Data
 
 Here is the data after removing the background using the mean blanks for the Serum Growth Assay of 2290 WT (Wild Type), -1$\Delta$, and -2$\Delta$, in 0% serum, 50% serum, and 50% heat inactivated (HI) serum.
 
