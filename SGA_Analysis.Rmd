@@ -19,6 +19,8 @@ library(tidyverse)
 library(readxl)
 library(viridis)
 library(ggpubr)
+library(knitr)
+library(kableExtra)
 ```
 
 
@@ -73,8 +75,17 @@ for (a in 1:ncol(raw_data_clean)) {
 }
 options(dplyr.width = Inf)
 raw_data_clean_t <- add_column(raw_data_clean, Time = c(1,2,3,4), .before = 1)
-kable(raw_data_clean_t, caption = "Serum Growth Assay for GN02290")
+if (length(i <- grep("del", colnames(raw_data_clean_t)))) {
+ delta_replace <- gsub("del", "\u0394", colnames(raw_data_clean_t))
+}
+if (length(i <- grep("del", colnames(raw_data_clean_t)))) {
+  colnames(raw_data_clean_t) <- delta_replace
+}
+kable(raw_data_clean_t, caption = "Serum Growth Assay for GN02290", "latex", booktabs = T) %>%
+  kable_styling(latex_options = c("striped", "scale_down", "hold_position"))
 ```
+
+Here is the data after removing the background using the mean blanks for the Serum Growth Assay of 2290 WT (Wild Type), -1$\Delta$, and -2$\Delta$, in 0% serum, 50% serum, and 50% heat inactivated (HI) serum.
 
 ```{r time}
 trans_data <- stack(raw_data_clean) %>%
@@ -126,4 +137,4 @@ annotate_figure(figure_1, top = text_grob("Serum Growth Assay for GN02290",
                color = "black", face = "bold", size = 14))
 ```
 
-Each plot shows how that serum type affected the growth of WT, -1$\Delta$, and -2$\Delta$ over a period of time in hours. Plots A, B, and C depict 0% serum, 50% serum, and 50% HI serum respectively,
+GN02290 WT, ppi-1$\Delta$, and ppi-2$\Delta$ were grown in solutions of 0% Serum (Limited Media), 50% Serum (Limited Media + Serum), 50% Heat-inactivated  (HI) Serum (Limited Media + HI-Serum), and 50% C5-inhibited (C5i) Serum (Limited Media + C5i-Serum). Serum was heat-inactivated by incubating at 56^o^C for 30 minutes and stored on ice until needed. C5 was inhibited by treating the serum with Eculizumab for a few minutes before adding cells. Figure 1A shows that all isolates grew similar in Limited Media. Figure 1B shows that the WT isolates were unaffected by the addition of serum compared to the mutants. Figure 1C shows that the heat-inactivation method does inactivate serum killing. Figure 1D shows that the Eculizumab treatment did not have an effect on serum killing.
