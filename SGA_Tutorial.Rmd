@@ -1,21 +1,41 @@
 ---
-title: "SGA Data Anaylsis"
+title: "SGA Data Analysis Tutorial"
 author: "OP & PC"
 date: "5/5/22"
 output:
-  pdf_document: default
+  pdf_document: 
+    latex_engine: xelatex
   html_document: default
 ---
 
 
 ### Introduction
 
-## Loading Libraries
+Welcome to the Serum Growth Assay Analysis Tutorial! In this tutorial, we will go through how to use RStudio to analyze data from a Serum Growth assay.
+
+A Serum Growth Assay is one where your isolate is grown in media that is some percentage of serum. In this tutorial, we use a practice data set where isolates were grown in either 0% Serum (Limited Media only), 50% Serum (Limited Media + Serum), and 50% Heat-inactivated (HI) Serum (Limited Media + HI-Serum). The heat-inactivated serum was created by incubating serum at 56^o^C for 30 minutes.
+
+Before you begin to use this tutorial, you will need to install some packages in order to perform the analysis. The accompanying README file will detail which packages and what you need to do to install them into RStudio.
+
+# Setting Up the Knit options for RMarkdown
+
+Before we begin the analysis using R, we need to set up the knit options. Knitting is how Rstudio will print an output file. In this tutorial, we will knit to pdf, so when you hit the knit button, which is found at the top of the RMarkdown pane (which should be at the top of this window pane), Rstudio will run all of the different code chunks and save the results in a PDF. The following code chunk will set up some options for knitting. Run this code chunk by hitting the play button at the top right corner of the chunk (next to the cog wheel).
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 ```
 
+Let's breakdown what this code chunk does:
+
+knitr::opts_chunk$set -- this is the function that will allow us to set some options for how RStudio will knit our RMarkdown.
+warning = FALSE -- This tells Rstudio that we don't want to see any warning in the pdf when we knit.
+message = FALSE -- This will prevent warning messages when knitting.
+echo = FALSE -- This is not in the above code chunk, but worth mentioning. This condition will prevent RStudio from printing out the code chunks when you knit. This is a nice option to make your pdf output a little more professional.
+
+# Loading the Appropriate Libraries
+This code chunk will load the necessary libraries need for our analysis. These libraries should already be installed, but if not, please see the README file on how to do it.
+
+Every time you open a project in RStudio, you will need to run your library code chunk, or a lot of your code chunks will just return an error instead of the results you want. Go ahead and run this code chunk.
 ```{r load libraries}
 library(dplyr)
 library(ggplot2)
@@ -25,28 +45,36 @@ library(readxl)
 library(viridis)
 library(ggpubr)
 library(knitr)
+library(kableExtra)
 ```
+
+# Preparing Data for Analysis
 
 ## Importing Data from Excel
 
+RStudio is a great tool for analyzing your data, but it is very tedious to input that data into a usable format in RStudio. We opted to using Excel to organize our data and import it into RStudio. Run the following code chunk and select the tutorial Excel file to import the data to RStudio.
+
 ```{r read file}
 raw_data <- read_excel(file.choose(), sheet = "Sheet1")
+raw_data
 ```
 
-## Identifying Special Characters in Column Names
+raw_data -- this is a name for a variable we chose to store our EXcel data. The "<-" says to store everything to the left of our variable name into that variable name. You can see what is in that variable by having a line that has just the variable name.
+read_excel <- This function is part of the readxl library and will read_excel in a RStudio friendly format.
+    file.choose() -- This will prompt a window that will let you choose an excel file for RStudio to load.
+    sheet -- This will tell the read_excel function which sheet in Excel contains the data you want to import into RStudio. The default is "Sheet1", so we'll     leave it like this for now.
+
+## Replacing Special Characters in Column Names
+
+While RStudio is great for analyzing data, we have to format our data to use it in RStudio. RStudio does not like having special characters in the column names and will not perform analysis. First we will identify and remove special characters from the column names in our data set.
+
+This code chunk will store our data set into a new variable. Whenever you are formatting your data, it is recommended to store your data into a new variable and use that to perform your formatting, so that you can go back if you make a mistake. Run the following code chunk to create a new data set that we will use.
+
 ```{r, New datset}
 raw_data_colnames <- raw_data
 ```
 
-# Checking for Special Characters in the Data
 
-```{r, Checking for Special Characters}
-# if (length(i <- grep("\u0394", colnames(raw_data_colnames)))) {
-#   cat("Special Characters appear the data frame", colnames(raw_data_colnames), "\n")
-# }
-```
-
-## Removing Special Characters From Column Names
 
 ```{r, Replacing Special Characters}
 if (length(i <- grep("\u0394", colnames(raw_data_colnames)))) {
@@ -96,13 +124,12 @@ for (a in 1:ncol(raw_data_clean)) {
 options(dplyr.width = Inf)
 raw_data_clean_t <- add_column(raw_data_clean, Time = c(1,2,3,4), .before = 1)
 
-# if (length(i <- grep("del", colnames(raw_data_clean_t)))) {
-#  delta_replace <- gsub("del", "\u0394", colnames(raw_data_clean_t))
-# }
-# if (length(i <- grep("del", colnames(raw_data_clean_t)))) {
-#   colnames(raw_data_clean_t) <- delta_replace
-# }
-
+if (length(i <- grep("del", colnames(raw_data_clean_t)))) {
+ delta_replace <- gsub("del", "\u0394", colnames(raw_data_clean_t))
+}
+if (length(i <- grep("del", colnames(raw_data_clean_t)))) {
+  colnames(raw_data_clean_t) <- delta_replace
+}
 kable(raw_data_clean_t, caption = "Serum Growth Assay for GN02290")
 ```
 
