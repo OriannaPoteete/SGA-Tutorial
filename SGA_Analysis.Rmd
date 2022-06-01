@@ -3,8 +3,8 @@ title: "SGA Analysis Pipeline"
 author: "OP & PC"
 date: "5/9/22"
 output:
-  pdf_document: default
-  html_document: default
+  pdf_document: 
+    latex_engine: xelatex
 ---
 
 ```{r setup, include=FALSE}
@@ -97,6 +97,7 @@ colnames(trans_data) [1:2] <- c("OD", "Sample")
 
 ```{r plot 1}
 od_600 = expression(paste(OD[600]))
+my.labs <- list("WT", "-1\u0394", "-2\u0394")
 zero_plot <- trans_data %>%
   filter(grepl(" 0%", Sample)) %>%
   ggplot(aes(x = Time, color = Sample, y = OD))+
@@ -104,7 +105,7 @@ zero_plot <- trans_data %>%
   geom_line()+
   labs(title = "0% Serum", y = od_600)+
   theme(plot.title = element_text(hjust = 0.5), legend.title = element_blank())+
-  scale_colour_manual(values = c("#c51b8a","#d95f0e","#2c7fb8"), labels = c("WT", "-1\u0394", "-2\u0394"))+
+  scale_colour_manual(values = c("#c51b8a","#d95f0e","#2c7fb8"), labels = my.labs)+
   xlim(0,4)+
   ylim(-0.1,1)
 
@@ -115,7 +116,7 @@ fifty_plot <- trans_data %>%
   geom_line()+
   labs(title = "50% Serum",  y = od_600)+
   theme(plot.title = element_text(hjust = 0.5), legend.title = element_blank())+
-  scale_colour_manual(values = c("#c51b8a","#d95f0e","#2c7fb8"), labels = c("WT", "-1\u0394", "-2\u0394"))+
+  scale_colour_manual(values = c("#c51b8a","#d95f0e","#2c7fb8"), labels = my.labs)+
   xlim(0,4)+
   ylim(-0.1,1)
 
@@ -126,7 +127,7 @@ hi_plot <- trans_data %>%
   geom_line()+
   labs(title = "HI-50% Serum", y = od_600)+
   theme(plot.title = element_text(hjust = 0.5), legend.title = element_blank())+
-  scale_colour_manual(values = c("#c51b8a","#d95f0e","#2c7fb8"), labels = c("WT", "-1\u0394", "-2\u0394"))+
+  scale_colour_manual(values = c("#c51b8a","#d95f0e","#2c7fb8"), labels = my.labs)+
   xlim(0,4)+
   ylim(-0.1,1)
 
