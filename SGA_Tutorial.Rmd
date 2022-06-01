@@ -62,7 +62,7 @@ raw_data
 raw_data -- this is a name for a variable we chose to store our EXcel data. The "<-" says to store everything to the left of our variable name into that variable name. You can see what is in that variable by having a line that has just the variable name.
 read_excel <- This function is part of the readxl library and will read_excel in a RStudio friendly format.
     file.choose() -- This will prompt a window that will let you choose an excel file for RStudio to load.
-    sheet -- This will tell the read_excel function which sheet in Excel contains the data you want to import into RStudio. The default is "Sheet1", so we'll     leave it like this for now.
+    sheet -- This will tell the read_excel function which sheet in Excel contains the data you want to import into RStudio. The default is "Sheet1", so we'll leave it like this for now.
 
 ## Replacing Special Characters in Column Names
 
@@ -133,7 +133,7 @@ if (length(i <- grep("del", colnames(raw_data_clean_t)))) {
 kable(raw_data_clean_t, caption = "Serum Growth Assay for GN02290")
 ```
 
-#Transforming the Data
+# Transforming the Data
 
 ```{r time}
 trans_data <- stack(raw_data_clean) %>%
