@@ -97,7 +97,7 @@ colnames(trans_data) [1:2] <- c("OD", "Sample")
 
 ```{r plot 1}
 od_600 = expression(paste(OD[600]))
-my.labs <- list("WT", "-1\u0394", "-2\u0394")
+my.labs <- list("WT", "ppi-1\u0394", "ppi-2\u0394")
 zero_plot <- trans_data %>%
   filter(grepl(" 0%", Sample)) %>%
   ggplot(aes(x = Time, color = Sample, y = OD))+
