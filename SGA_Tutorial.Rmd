@@ -111,13 +111,16 @@ raw_data_clean <- raw_data_colnames %>%
 ```{r for loop}
 for (a in 1:ncol(raw_data_clean)) {
  if (grepl(" 0%", colnames(raw_data_clean)[a])) {
-   raw_data_clean[ , a] <- raw_data_clean[ , a] - as.numeric(raw_data_blank_mean[1])
+   raw_data_clean[ , a] <- raw_data_clean[ , a] - 
+     as.numeric(raw_data_blank_mean[1])
  }
  if (grepl(" 50%", colnames(raw_data_clean)[a])) {
-   raw_data_clean[ , a] <- raw_data_clean[ , a] - as.numeric(raw_data_blank_mean[2])
+   raw_data_clean[ , a] <- raw_data_clean[ , a] - 
+     as.numeric(raw_data_blank_mean[2])
  }
  if (grepl("-50%", colnames(raw_data_clean)[a])) {
-   raw_data_clean[ , a] <- raw_data_clean[ , a] - as.numeric(raw_data_blank_mean[3])
+   raw_data_clean[ , a] <- raw_data_clean[ , a] - 
+     as.numeric(raw_data_blank_mean[3])
  }
 }
 options(dplyr.width = Inf)
@@ -152,7 +155,8 @@ zero_plot <- trans_data %>%
   geom_line()+
   labs(title = "0% Serum", y = od_600)+
   theme(plot.title = element_text(hjust = 0.5), legend.title = element_blank())+
-  scale_colour_manual(values = c("#c51b8a","#d95f0e","#2c7fb8"), labels = c("WT", "-1\u0394", "-2\u0394"))+
+  scale_colour_manual(values = c("#c51b8a","#d95f0e","#2c7fb8"), 
+                      labels = c("WT", "-1\u0394", "-2\u0394"))+
   xlim(0,4)+
   ylim(-0.1,1)
 
@@ -163,7 +167,8 @@ fifty_plot <- trans_data %>%
   geom_line()+
   labs(title = "50% Serum",  y = od_600)+
   theme(plot.title = element_text(hjust = 0.5), legend.title = element_blank())+
-  scale_colour_manual(values = c("#c51b8a","#d95f0e","#2c7fb8"), labels = c("WT", "-1\u0394", "-2\u0394"))+
+  scale_colour_manual(values = c("#c51b8a","#d95f0e","#2c7fb8"), 
+                      labels = c("WT", "-1\u0394", "-2\u0394"))+
   xlim(0,4)+
   ylim(-0.1,1)
 
@@ -174,7 +179,8 @@ hi_plot <- trans_data %>%
   geom_line()+
   labs(title = "HI-50% Serum", y = od_600)+
   theme(plot.title = element_text(hjust = 0.5), legend.title = element_blank())+
-  scale_colour_manual(values = c("#c51b8a","#d95f0e","#2c7fb8"), labels = c("WT", "-1\u0394", "-2\u0394"))+
+  scale_colour_manual(values = c("#c51b8a","#d95f0e","#2c7fb8"), 
+                      labels = c("WT", "-1\u0394", "-2\u0394"))+
   xlim(0,4)+
   ylim(-0.1,1)
 
