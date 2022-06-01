@@ -1,0 +1,160 @@
+---
+title: "SGA Data Anaylsis"
+author: "OP & PC"
+date: "5/5/22"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+
+### Introduction
+
+## Loading Libraries
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+```{r load libraries}
+library(dplyr)
+library(ggplot2)
+library(tinytex)
+library(tidyverse)
+library(readxl)
+library(viridis)
+library(ggpubr)
+library(knitr)
+```
+
+## Importing Data from Excel
+
+```{r read file}
+raw_data <- read_excel(file.choose(), sheet = "Sheet1")
+```
+
+## Identifying Special Characters in Column Names
+```{r, New datset}
+raw_data_colnames <- raw_data
+```
+
+# Checking for Special Characters in the Data
+
+```{r, Checking for Special Characters}
+# if (length(i <- grep("\u0394", colnames(raw_data_colnames)))) {
+#   cat("Special Characters appear the data frame", colnames(raw_data_colnames), "\n")
+# }
+```
+
+## Removing Special Characters From Column Names
+
+```{r, Replacing Special Characters}
+if (length(i <- grep("\u0394", colnames(raw_data_colnames)))) {
+ delta_replace <- gsub("\u0394", "del", colnames(raw_data_colnames))
+}
+if (length(i <- grep("\u0394", colnames(raw_data_colnames)))) {
+  colnames(raw_data_colnames) <- delta_replace
+}
+options(dplyr.width = Inf)
+raw_data_colnames
+```
+
+## Averaging Blank Measurements for Removing Background Noise
+
+```{r, second New dataset}
+raw_data_blank_mean <- raw_data_colnames
+```
+
+```{r, Averaging Blanks}
+raw_data_blank_mean <- raw_data_colnames %>%
+  select(contains("Blank")) %>%
+  colMeans(na.rm = TRUE) %>%
+  round(3)
+```
+
+## Removing Blank Measurement from Table
+
+```{r clean data}
+raw_data_clean <- raw_data_colnames %>%
+  select(-`0% (Blank)`, -`50% (Blank)`, -`HI-50% (Blank)`, -`Time`)
+```
+
+## Removing Background Noise
+
+```{r for loop}
+for (a in 1:ncol(raw_data_clean)) {
+ if (grepl(" 0%", colnames(raw_data_clean)[a])) {
+   raw_data_clean[ , a] <- raw_data_clean[ , a] - as.numeric(raw_data_blank_mean[1])
+ }
+ if (grepl(" 50%", colnames(raw_data_clean)[a])) {
+   raw_data_clean[ , a] <- raw_data_clean[ , a] - as.numeric(raw_data_blank_mean[2])
+ }
+ if (grepl("-50%", colnames(raw_data_clean)[a])) {
+   raw_data_clean[ , a] <- raw_data_clean[ , a] - as.numeric(raw_data_blank_mean[3])
+ }
+}
+options(dplyr.width = Inf)
+raw_data_clean_t <- add_column(raw_data_clean, Time = c(1,2,3,4), .before = 1)
+
+if (length(i <- grep("del", colnames(raw_data_clean_t)))) {
+ delta_replace <- gsub("del", "\u0394", colnames(raw_data_clean_t))
+}
+if (length(i <- grep("del", colnames(raw_data_clean_t)))) {
+  colnames(raw_data_clean_t) <- delta_replace
+}
+
+kable(raw_data_clean_t, caption = "Serum Growth Assay for GN02290")
+```
+
+#Transforming the Data
+
+```{r time}
+trans_data <- stack(raw_data_clean) %>%
+  mutate(Time = rep(c(1,2,3,4), times = 9))
+colnames(trans_data) [1:2] <- c("OD", "Sample")
+```
+
+
+# Graphing Cleaned Data
+
+```{r plots}
+od_600 = expression(paste(OD[600]))
+zero_plot <- trans_data %>%
+  filter(grepl(" 0%", Sample)) %>%
+  ggplot(aes(x = Time, color = Sample, y = OD))+
+  geom_point(size = 1.5)+
+  geom_line()+
+  labs(title = "0% Serum", y = od_600)+
+  theme(plot.title = element_text(hjust = 0.5), legend.title = element_blank())+
+  scale_colour_manual(values = c("#c51b8a","#d95f0e","#2c7fb8"), labels = c("WT", "-1\u0394", "-2\u0394"))+
+  xlim(0,4)+
+  ylim(-0.1,1)
+
+fifty_plot <- trans_data %>%
+  filter(grepl(" 50%", Sample)) %>%
+  ggplot(aes(x = Time, color = Sample, y = OD))+
+  geom_point(size = 1.5)+
+  geom_line()+
+  labs(title = "50% Serum",  y = od_600)+
+  theme(plot.title = element_text(hjust = 0.5), legend.title = element_blank())+
+  scale_colour_manual(values = c("#c51b8a","#d95f0e","#2c7fb8"), labels = c("WT", "-1\u0394", "-2\u0394"))+
+  xlim(0,4)+
+  ylim(-0.1,1)
+
+hi_plot <- trans_data %>%
+  filter(grepl("HI-50%", Sample)) %>%
+  ggplot(aes(x = Time, color = Sample, y = OD))+
+  geom_point(size = 1.5)+
+  geom_line()+
+  labs(title = "HI-50% Serum", y = od_600)+
+  theme(plot.title = element_text(hjust = 0.5), legend.title = element_blank())+
+  scale_colour_manual(values = c("#c51b8a","#d95f0e","#2c7fb8"), labels = c("WT", "-1\u0394", "-2\u0394"))+
+  xlim(0,4)+
+  ylim(-0.1,1)
+
+figure_1 <- ggarrange(zero_plot, fifty_plot, hi_plot,
+                    labels = c("A", "B", "C"),
+                    ncol = 2, nrow = 2, common.legend = TRUE,legend="bottom")
+annotate_figure(figure_1, top = text_grob("Serum Growth Assay for GN02290", 
+               color = "black", face = "bold", size = 14))
+```
