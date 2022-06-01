@@ -1,5 +1,5 @@
 ---
-title: "SGA Anaylsis Pipeline"
+title: "SGA Analysis Pipeline"
 author: "OP & PC"
 date: "5/9/22"
 output:
