@@ -5,7 +5,6 @@ date: "5/5/22"
 output:
   pdf_document: 
     latex_engine: xelatex
-  html_document: default
 ---
 
 
