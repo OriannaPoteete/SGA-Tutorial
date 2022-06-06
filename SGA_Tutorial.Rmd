@@ -83,17 +83,13 @@ options(dplyr.width = Inf)
 raw_data_colnames
 ```
 
-if --
-    length -- tells Rstudio to only replace the special character?
-    i --
-    grep --
-        "\u0394" --
-        colnames() -- the text specifies which dataset the code is changing
-    data_replace --
-    gsub
-        "del" --
-options --
-  dplyr.width = Inf --
+data_replace -- list of new column names
+gsub -- creates a list with the special character replaced by the given text
+    "\u0394" -- unicode for the special character
+    "del" -- text that will be replacing the character
+    colnames() -- the text specifies which dataset the code is changing
+options -- changes with options for knitting the table
+  dplyr.width = Inf -- changes the width of the table to infinity so that the whole table fits on one page
 raw_data_colnames -- this just displays the changed dataset
 
 
