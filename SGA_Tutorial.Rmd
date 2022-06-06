@@ -54,7 +54,8 @@ library(kableExtra)
 RStudio is a great tool for analyzing your data, but it is very tedious to input that data into a usable format in RStudio. We opted to using Excel to organize our data and import it into RStudio. Run the following code chunk and select the tutorial Excel file to import the data to RStudio.
 
 ```{r read file}
-raw_data <- read_excel(file.choose(), sheet = "Sheet1")
+# raw_data <- read_excel(file.choose(), sheet = "Sheet1")
+raw_data <- read_excel("C:/Users/kopot/Desktop/Work/SGA/SGA_2290_WT_-1del_-2del_PC04202022.xlsx", sheet = "Sheet1")
 raw_data
 ```
 
@@ -73,7 +74,7 @@ This code chunk will store our data set into a new variable. Whenever you are fo
 raw_data_colnames <- raw_data
 ```
 
-The following code chunk identities the special characters by the unicode and replaces them with specified text. 
+The following code chunk identifies the special characters by their unicode and replaces them with specified text. 
 
 ```{r, Replacing Special Characters}
 if (length(i <- grep("\u0394", colnames(raw_data_colnames)))) {
@@ -87,15 +88,15 @@ raw_data_colnames
 ```
 
 if --
-    length --
+    length -- 
     i --
     grep --
         "\u0394" --
-        colnames() -- the text specifies which dataset the code is changing.
+        colnames() -- the text specifies which dataset the code is changing
     data_replace --
     gsub
         "del" --
-options
+options --
   dplyr.width = Inf --
 raw_data_colnames -- this just displays the changed dataset
 
@@ -139,8 +140,13 @@ for (a in 1:ncol(raw_data_clean)) {
      as.numeric(raw_data_blank_mean[3])
  }
 }
-options(dplyr.width = Inf)
-raw_data_clean_t <- add_column(raw_data_clean, Time = c(1,2,3,4), .before = 1)
+```
+
+
+
+
+``` {r replace}
+raw_data_clean_t <- raw_data_clean
 
 if (length(i <- grep("del", colnames(raw_data_clean_t)))) {
  delta_replace <- gsub("del", "\u0394", colnames(raw_data_clean_t))
@@ -148,12 +154,15 @@ if (length(i <- grep("del", colnames(raw_data_clean_t)))) {
 if (length(i <- grep("del", colnames(raw_data_clean_t)))) {
   colnames(raw_data_clean_t) <- delta_replace
 }
-kable(raw_data_clean_t, caption = "Serum Growth Assay for GN02290")
+options(dplyr.width = Inf)
+kable(raw_data_clean_t, caption = "Serum Growth Assay for GN02290", "latex", booktabs = T) %>%
+  kable_styling(latex_options = c("striped", "scale_down", "hold_position"))
 ```
 
 # Transforming the Data
 
 ```{r time}
+
 trans_data <- stack(raw_data_clean) %>%
   mutate(Time = rep(c(1,2,3,4), times = 9))
 colnames(trans_data) [1:2] <- c("OD", "Sample")
