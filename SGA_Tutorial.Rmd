@@ -77,18 +77,14 @@ raw_data_colnames <- raw_data
 The following code chunk identifies the special characters by their unicode and replaces them with specified text. 
 
 ```{r, Replacing Special Characters}
-if (length(i <- grep("\u0394", colnames(raw_data_colnames)))) {
- delta_replace <- gsub("\u0394", "del", colnames(raw_data_colnames))
-}
-if (length(i <- grep("\u0394", colnames(raw_data_colnames)))) {
-  colnames(raw_data_colnames) <- delta_replace
-}
+delta_replace <- gsub("\u0394", "del", colnames(raw_data_colnames))
+colnames(raw_data_colnames) <- delta_replace
 options(dplyr.width = Inf)
 raw_data_colnames
 ```
 
 if --
-    length -- 
+    length -- tells Rstudio to only replace the special character?
     i --
     grep --
         "\u0394" --
