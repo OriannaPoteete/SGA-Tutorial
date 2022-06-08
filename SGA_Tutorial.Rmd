@@ -154,10 +154,12 @@ kable(raw_data_clean_t, caption = "Serum Growth Assay for GN02290", "latex", boo
 # Transforming the Data
 
 ```{r time}
-
-trans_data <- stack(raw_data_clean) %>%
-  mutate(Time = rep(c(1,2,3,4), times = 9))
-colnames(trans_data) [1:2] <- c("OD", "Sample")
+trans_data <- stack(raw_data_clean)
+time_data <- raw_data_colnames %>%
+  select(`Time`)
+length <- length(raw_data_clean)
+time_data <- cbind(rep(time_data$Time, as.numeric(length)))
+trans_data_1 <- cbind(trans_data, time_data)
 ```
 
 
