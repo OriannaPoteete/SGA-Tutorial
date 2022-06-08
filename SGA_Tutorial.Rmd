@@ -20,16 +20,16 @@ Before you begin to use this tutorial, you will need to install some packages in
 
 Before we begin the analysis using R, we need to set up the knit options. Knitting is how Rstudio will print an output file. In this tutorial, we will knit to pdf, so when you hit the knit button, which is found at the top of the RMarkdown pane (which should be at the top of this window pane), Rstudio will run all of the different code chunks and save the results in a PDF. The following code chunk will set up some options for knitting. Run this code chunk by hitting the play button at the top right corner of the chunk (next to the cog wheel).
 
-```{r setup, include=FALSE}
+```{r setup, include=TRUE}
 knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 ```
 
 Let's breakdown what this code chunk does:
 
-knitr::opts_chunk$set -- this is the function that will allow us to set some options for how RStudio will knit our RMarkdown.
-warning = FALSE -- This tells Rstudio that we don't want to see any warning in the pdf when we knit.
-message = FALSE -- This will prevent warning messages when knitting.
-echo = FALSE -- This is not in the above code chunk, but worth mentioning. This condition will prevent RStudio from printing out the code chunks when you knit. This is a nice option to make your pdf output a little more professional.
+* knitr::opts_chunk$set -- this is the function that will allow us to set some options for how RStudio will knit our RMarkdown.
+* warning = FALSE -- This tells Rstudio that we don't want to see any warning in the pdf when we knit.
+* message = FALSE -- This will prevent warning messages when knitting.
+* echo = FALSE -- This is not in the above code chunk, but worth mentioning. This condition will prevent RStudio from printing out the code chunks when you knit. This is a nice option to make your pdf output a little more professional.
 
 # Loading the Appropriate Libraries
 This code chunk will load the necessary libraries need for our analysis. These libraries should already be installed, but if not, please see the README file on how to do it.
@@ -55,14 +55,15 @@ RStudio is a great tool for analyzing your data, but it is very tedious to input
 
 ```{r read file}
 # raw_data <- read_excel(file.choose(), sheet = "Sheet1")
-raw_data <- read_excel("C:/Users/kopot/Desktop/Work/SGA/SGA_2290_WT_-1del_-2del_PC04202022.xlsx", sheet = "Sheet1")
+raw_data <- read_excel("C:/Users/kopot/Desktop/Work/SGA/SGA_2290_WT_-1del_-2del_PC04202022.xlsx", 
+                       sheet = "Sheet1")
 raw_data
 ```
 
-raw_data -- this is a name for a variable we chose to store our EXcel data. The "<-" says to store everything to the left of our variable name into that variable name. You can see what is in that variable by having a line that has just the variable name.
-read_excel <- This function is part of the readxl library and will read_excel in a RStudio friendly format.
-    file.choose() -- This will prompt a window that will let you choose an excel file for RStudio to load.
-    sheet -- This will tell the read_excel function which sheet in Excel contains the data you want to import into RStudio. The default is "Sheet1", so we'll leave it like this for now.
+* raw_data -- this is a name for a variable we chose to store our EXcel data. The "<-" says to store everything to the left of our variable name into that variable name. You can see what is in that variable by having a line that has just the variable name.
+* read_excel <- This function is part of the readxl library and will read_excel in a RStudio friendly format.
+    + file.choose() -- This will prompt a window that will let you choose an excel file for RStudio to load.
+    + sheet -- This will tell the read_excel function which sheet in Excel contains the data you want to import into RStudio. The default is "Sheet1", so we'll leave it like this for now.
 
 ## Replacing Special Characters in Column Names
 
@@ -83,14 +84,14 @@ options(dplyr.width = Inf)
 raw_data_colnames
 ```
 
-data_replace <- list of new column names
-gsub <- creates a list with the special character replaced by the given text
-    "\u0394" -- unicode for the special character
-    "del" -- text that will be replacing the character
-    colnames() -- the text specifies which dataset the code is changing
-options <- changes with options for knitting the table
-  dplyr.width = Inf -- changes the width of the table to infinity so that the whole table fits on one page
-raw_data_colnames <- this just displays the changed dataset
+* data_replace <- list of new column names
+* gsub <- creates a list with the special character replaced by the given text
+    + "\u0394" -- unicode for the special character
+    + "del" -- text that will be replacing the character
+    + colnames() -- the text specifies which dataset the code is changing
+* options <- changes with options for knitting the table
+    + dplyr.width = Inf -- changes the width of the table to infinity so that the whole table fits on one page
+* raw_data_colnames <- this just displays the changed dataset
 
 
 ## Averaging Blank Measurements for Removing Background Noise
@@ -106,11 +107,11 @@ raw_data_blank_mean <- raw_data_colnames %>%
   round(3)
 ```
 
-select() <- allows you to pick which columns to use in the code. You can also remove columns by typing a "-" symbol before the column name.
-    contains("") -- this looks at the titles of the columns and selects the ones that have the inputted value/text within the quotations
-colMeans() <- this calculates the means for each column
-    na.rm = TRUE -- this tells it to ignore the NA values
-round() <- this tells it to what decimal point to round to
+* select() <- allows you to pick which columns to use in the code. You can also remove columns by typing a "-" symbol before the column name.
+    + contains("") -- this looks at the titles of the columns and selects the ones that have the inputted value/text within the quotations
+* colMeans() <- this calculates the means for each column
+    + na.rm = TRUE -- this tells it to ignore the NA values
+* round() <- this tells it to what decimal point to round to
 
 ## Removing Blank Measurement from Table
 
@@ -140,11 +141,11 @@ for (a in 1:ncol(raw_data_clean)) {
 }
 ```
 
-for(){} <- this codes a conditional statement where for the values specified in the parenthesis it will loop through all the values, running the code specified within the curly brackets. This will stop when it reaches the end of the values
-    if(){} <- this codes a conditional statement of if whatever in the parenthesis is true, then run the code in the curly brackets. If false, then do nothing
-        grepl() <- this looks for a specific inputted value and returns either TRUE or FALSE
-            a --
-        as.numeric() <- this tells it to turn the inputted values into numbers if they are not saved as such
+* for(){} <- this codes a conditional statement where for the values specified in the parenthesis it will loop through all the values, running the code specified within the curly brackets. This will stop when it reaches the end of the values
+* if(){} <- this codes a conditional statement of if whatever in the parenthesis is true, then run the code in the curly brackets. If false, then do nothing
+    + grepl() <- this looks for a specific inputted value and returns either TRUE or FALSE
+    + a --
+    + as.numeric() <- this tells it to turn the inputted values into numbers if they are not saved as such
 
 
 ``` {r replace}
@@ -155,15 +156,16 @@ delta_replace <- gsub("del", "\u0394", colnames(raw_data_clean_t))
 colnames(raw_data_clean_t) <- delta_replace
 
 options(dplyr.width = Inf)
-kable(raw_data_clean_t, caption = "Serum Growth Assay for GN02290", "latex", booktabs = T) %>%
+kable(raw_data_clean_t, caption = "Serum Growth Assay for GN02290", "latex", 
+      booktabs = T) %>%
   kable_styling(latex_options = c("striped", "scale_down", "hold_position"))
 ```
 
-kable() <- displays a dataset in a table
-    caption = "" -- text which appears above the table?
-    booktabs = T -- changes the way LaTex formats and displays the table
-    kable_styling() -- allows for customization of the displayed table
-        latex_options = "" -- customizes the colors and structure of the table
+* kable() <- displays a dataset in a table
+    + caption = "" -- text which appears above the table?
+    + booktabs = T -- changes the way LaTex formats and displays the table
+    + kable_styling() -- allows for customization of the displayed table
+    + latex_options = "" -- customizes the colors and structure of the table
 
 # Transforming the Data
 
@@ -173,13 +175,14 @@ time_data <- raw_data_colnames %>%
   select(`Time`)
 length <- length(raw_data_clean)
 time_data <- cbind(rep(time_data$Time, as.numeric(length)))
-trans_data_1 <- cbind(trans_data, time_data)
+trans_data <- cbind(trans_data, time_data)
+colnames(trans_data) <- c("OD", "Sample", "Time")
 ```
 
-stack() <- stacks multiple columns into one column
-length() <- the amount of columns in the dataset
-cbind() <- combines data by columns
-    rep() -- the data that will be repeated a set number of times
+* stack() <- stacks multiple columns into one column
+* length() <- the amount of columns in the dataset
+* cbind() <- combines data by columns
+    + rep() -- the data that will be repeated a set number of times
 
 # Graphing Cleaned Data
 
@@ -228,40 +231,40 @@ annotate_figure(figure_1, top = text_grob("Serum Growth Assay for GN02290",
                color = "black", face = "bold", size = 14))
 ```
 
-expression() <- creates an object
-    paste() <- chains together vectors after converting them to characters
-filter() <- this selects which columns to analyze by given parameters
-ggplot() <- allows the data to be displayed within a plot
-    aes() -- this is what is used to choose which variables are displayed on different portions of the graph
-        y = "" -- variable displayed on the y-axis
-        x = "" -- variable displayed on the x-axis
-        color = "" -- variable displayed through the colors
-geom_point() -- this selects a scatterplot as the specific plot
-goem_line() -- this creates a line between point on the scatterplot
-labs() -- this labels various potions of the plot
-    title = "" -- labels the title
-    y = "" -- labels the y-axis
-theme() -- customizes non-data portion of the plot
-    plot.title = "" -- the title of the plot
-        element_text() -- tells it to look at the variable title and use that?
-            hjust = 0.5 -- changes the size of the 
-    legend.title = "" -- alters the legend title
-        element_blank() -- tells it to exclude the legend title
-scale_colour_manual() -- customizes the color types and scale of the colors
-    values = "" -- selects the colors based on their hex number
-    labels = "" -- labels the legend
-xlim() -- x axis limits
-ylim() -- y axis limits
-ggarrange() <- allows for multiple plots to be displayed at once together
-    labels = "" -- labels the various plots
-    ncol = "" -- how many plots are side by side
-    nrow = "" -- how many plots are up and down
-    common.legend = TRUE -- this allows for there to be a common legend, or if it was false than the graphs would have seperate legends
-    legend = "" -- location of the legend in relation to the placement of the graph
-annotate_figure() <- customizes the plot figure that was created
-    top = "" -- placement of the figure title
-        text_grob() -- the text that will show up as the figure title
-    color = "" -- changes the color of the text
-    face = "" -- changes the font (i.e. italics, bold, etc.)
-    size = "" -- size of text
+* expression() <- creates an object
+    + paste() <- chains together vectors after converting them to characters
+* filter() <- this selects which columns to analyze by given parameters
+* ggplot() <- allows the data to be displayed within a plot
+    + aes() -- this is what is used to choose which variables are displayed on different portions of the graph
+    + y = "" -- variable displayed on the y-axis
+    + x = "" -- variable displayed on the x-axis
+    + color = "" -- variable displayed through the colors
+* geom_point() -- this selects a scatterplot as the specific plot
+* goem_line() -- this creates a line between point on the scatterplot
+* labs() -- this labels various potions of the plot
+    + title = "" -- labels the title
+    + y = "" -- labels the y-axis
+* theme() -- customizes non-data portion of the plot
+    + plot.title = "" -- the title of the plot
+    + element_text() -- tells it to look at the variable title and use that?
+    + hjust = 0.5 -- changes the size of the 
+    + legend.title = "" -- alters the legend title
+    + element_blank() -- tells it to exclude the legend title
+* scale_colour_manual() -- customizes the color types and scale of the colors
+    + values = "" -- selects the colors based on their hex number
+    + labels = "" -- labels the legend
+* xlim() -- x axis limits
+* ylim() -- y axis limits
+* ggarrange() <- allows for multiple plots to be displayed at once together
+    + labels = "" -- labels the various plots
+    + ncol = "" -- how many plots are side by side
+    + nrow = "" -- how many plots are up and down
+    + common.legend = TRUE -- this allows for there to be a common legend, or if it was false than the graphs would have seperate legends
+    + legend = "" -- location of the legend in relation to the placement of the graph
+* annotate_figure() <- customizes the plot figure that was created
+    + top = "" -- placement of the figure title
+    + text_grob() -- the text that will show up as the figure title
+    + color = "" -- changes the color of the text
+    + face = "" -- changes the font (i.e. italics, bold, etc.)
+    + size = "" -- size of text
 
