@@ -106,6 +106,12 @@ raw_data_blank_mean <- raw_data_colnames %>%
   round(3)
 ```
 
+select() -- allows you to pick which columns to use in the code. You can also remove columns by typing a "-" symbol before the column name.
+    contains("") -- this looks at the titles of the columns and selects the ones that have the inputted value/text within the quotations
+colMeans() -- this calculates the means for each column
+    na.rm = TRUE -- this tells it to ignore the NA values
+round() -- this tells it to what decimal point to round to
+
 ## Removing Blank Measurement from Table
 
 ```{r clean data}
@@ -134,22 +140,30 @@ for (a in 1:ncol(raw_data_clean)) {
 }
 ```
 
-
+for(){} --
+    if(){} --
+        grepl() -- this looks for a specific inputted value and returns either TRUE or FALSE
+        a --
+        as.numeric() -- this tells it to turn the inputted values into numbers if they are not saved as such
 
 
 ``` {r replace}
 raw_data_clean_t <- raw_data_clean
 
-if (length(i <- grep("del", colnames(raw_data_clean_t)))) {
- delta_replace <- gsub("del", "\u0394", colnames(raw_data_clean_t))
-}
-if (length(i <- grep("del", colnames(raw_data_clean_t)))) {
-  colnames(raw_data_clean_t) <- delta_replace
-}
+delta_replace <- gsub("del", "\u0394", colnames(raw_data_clean_t))
+
+colnames(raw_data_clean_t) <- delta_replace
+
 options(dplyr.width = Inf)
 kable(raw_data_clean_t, caption = "Serum Growth Assay for GN02290", "latex", booktabs = T) %>%
   kable_styling(latex_options = c("striped", "scale_down", "hold_position"))
 ```
+
+kable() -- 
+    caption = "" --
+    booktabs = T --
+    kable_styling() --
+        latex_options = "" --
 
 # Transforming the Data
 
@@ -162,6 +176,10 @@ time_data <- cbind(rep(time_data$Time, as.numeric(length)))
 trans_data_1 <- cbind(trans_data, time_data)
 ```
 
+stack() --
+length() --
+cbind() --
+    rep() --
 
 # Graphing Cleaned Data
 
@@ -209,3 +227,38 @@ figure_1 <- ggarrange(zero_plot, fifty_plot, hi_plot,
 annotate_figure(figure_1, top = text_grob("Serum Growth Assay for GN02290", 
                color = "black", face = "bold", size = 14))
 ```
+
+expression() --
+    paste() --
+filter() --
+ggplot() --
+    aes() --
+geom_point() --
+goem_line() --
+labs() --
+    title = "" --
+    y = "" --
+theme() --
+    plot.title = "" --
+        element_text() --
+            hjust = 0.5 --
+    legend.title = "" --
+        element_blank() --
+scale_colour_manual() --
+    values = "" --
+    labels = "" --
+xlim() -- x axis limits
+ylim() -- y axis limits
+ggarrange() --
+    labels = "" --
+    ncol = "" --
+    nrow = "" --
+    common.legend = TRUE -- this allows for there to be a common legend, or if it was false than the graphs would have seperate legends
+    legend = "" -- location of the legend in relation to the placement of the graph
+annotate_figure() --
+    top = "" --
+        text_grob() --
+    color = "" -- color of text
+    face = "" --
+    size = "" -- size of text
+
