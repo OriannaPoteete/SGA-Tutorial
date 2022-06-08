@@ -140,8 +140,8 @@ for (a in 1:ncol(raw_data_clean)) {
 }
 ```
 
-for(){} <-
-    if(){} <-
+for(){} <- this codes a conditional statement where for the values specified in the parenthesis it will loop through all the values, running the code specified within the curly brackets. This will stop when it reaches the end of the values
+    if(){} <- this codes a conditional statement of if whatever in the parenthesis is true, then run the code in the curly brackets. If false, then do nothing
         grepl() <- this looks for a specific inputted value and returns either TRUE or FALSE
             a --
         as.numeric() <- this tells it to turn the inputted values into numbers if they are not saved as such
