@@ -57,8 +57,6 @@ raw_data_clean <- raw_data_colnames %>%
 
 # Clean Data
 
-Here is the data after removing the background using the mean blanks for the Serum Growth Assay of 2290 WT (Wild Type), -1$\Delta$, and -2$\Delta$, in 0% serum, 50% serum, and 50% heat inactivated (HI) serum.
-
 ```{r for loop}
 for (a in 1:ncol(raw_data_clean)) {
  if (grepl(" 0%", colnames(raw_data_clean)[a])) {
@@ -77,12 +75,11 @@ delta_replace <- gsub("del", "\u0394", colnames(raw_data_clean_t))
 colnames(raw_data_clean_t) <- delta_replace
 
 options(dplyr.width = Inf)
-kable(raw_data_clean_t, caption = "Serum Growth Assay for GN02290", "latex", 
+kable(raw_data_clean_t, caption = "Serum Growth Assay for eOP16", "latex", 
       booktabs = T) %>%
   kable_styling(latex_options = c("striped", "scale_down", "hold_position"))
 ```
 
-Here is the data after removing the background using the mean blanks for the Serum Growth Assay of 2290 WT (Wild Type), -1$\Delta$, and -2$\Delta$, in 0% serum, 50% serum, and 50% heat inactivated (HI) serum.
 
 ```{r time}
 trans_data <- stack(raw_data_clean)
@@ -137,8 +134,8 @@ hi_plot <- trans_data %>%
 figure_1 <- ggarrange(zero_plot, fifty_plot, hi_plot,
                     labels = c("A", "B", "C"),
                     ncol = 2, nrow = 2, common.legend = TRUE,legend="bottom")
-annotate_figure(figure_1, top = text_grob("Serum Growth Assay for GN02290", 
+annotate_figure(figure_1, top = text_grob("Serum Growth Assay for eOP16", 
                color = "black", face = "bold", size = 14))
 ```
 
-GN02290 WT, ppi-1$\Delta$, and ppi-2$\Delta$ were grown in solutions of 0% Serum (Limited Media), 50% Serum (Limited Media + Serum), 50% Heat-inactivated  (HI) Serum (Limited Media + HI-Serum), and 50% C5-inhibited (C5i) Serum (Limited Media + C5i-Serum). Serum was heat-inactivated by incubating at 56^o^C for 30 minutes and stored on ice until needed. C5 was inhibited by treating the serum with Eculizumab for a few minutes before adding cells. Figure 1A shows that all isolates grew similar in Limited Media. Figure 1B shows that the WT isolates were unaffected by the addition of serum compared to the mutants. Figure 1C shows that the heat-inactivation method does inactivate serum killing. Figure 1D shows that the Eculizumab treatment did not have an effect on serum killing.
+
