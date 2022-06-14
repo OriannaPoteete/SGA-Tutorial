@@ -58,11 +58,15 @@ install.packages("kableExtra")
 
 ## Common Unicode ID's
 
-- Delta: \u0394
-- alpha: \u03B1
-- beta: \u03B2
-- gamma: \u03B3
-- zeta: \u03B6
+For all unicode characters, there is a backslash, followed by a unicode ID.
+
+Here are some common character ID's:
+
+- Delta: u0394
+- alpha: u03B1
+- beta: u03B2
+- gamma: u03B3
+- zeta: u03B6
 
 For all other symbols, search in this website for the unicode: https://www.fileformat.info/info/unicode/char/search.htm 
   - When writing the unicode in R, don't include the "+" in the code.
