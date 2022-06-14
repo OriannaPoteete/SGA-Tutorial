@@ -25,7 +25,7 @@ library(kableExtra)
 
 
 ```{r read file}
-raw_data <- read_excel(file.choose(), sheet = "Raw")
+raw_data <- read_excel(file.choose(), sheet = "Sheet1")
 ```
 
 ```{r, New datset}
@@ -33,12 +33,10 @@ raw_data_colnames <- raw_data
 ```
 
 ```{r, Replacing Special Characters}
-if (length(i <- grep("\u0394", colnames(raw_data_colnames)))) {
- delta_replace <- gsub("\u0394", "del", colnames(raw_data_colnames))
-}
-if (length(i <- grep("\u0394", colnames(raw_data_colnames)))) {
-  colnames(raw_data_colnames) <- delta_replace
-}
+delta_replace <- gsub("\u0394", "del", colnames(raw_data_colnames))
+colnames(raw_data_colnames) <- delta_replace
+options(dplyr.width = Inf)
+raw_data_colnames
 ```
 
 ```{r, second New dataset}
@@ -73,31 +71,33 @@ for (a in 1:ncol(raw_data_clean)) {
    raw_data_clean[ , a] <- raw_data_clean[ , a] - as.numeric(raw_data_blank_mean[3])
  }
 }
+
+delta_replace <- gsub("del", "\u0394", colnames(raw_data_clean_t))
+
+colnames(raw_data_clean_t) <- delta_replace
+
 options(dplyr.width = Inf)
-raw_data_clean_t <- add_column(raw_data_clean, Time = c(1,2,3,4), .before = 1)
-if (length(i <- grep("del", colnames(raw_data_clean_t)))) {
- delta_replace <- gsub("del", "\u0394", colnames(raw_data_clean_t))
-}
-if (length(i <- grep("del", colnames(raw_data_clean_t)))) {
-  colnames(raw_data_clean_t) <- delta_replace
-}
-kable(raw_data_clean_t, caption = "Serum Growth Assay for GN02290", "latex", booktabs = T) %>%
+kable(raw_data_clean_t, caption = "Serum Growth Assay for GN02290", "latex", 
+      booktabs = T) %>%
   kable_styling(latex_options = c("striped", "scale_down", "hold_position"))
 ```
 
 Here is the data after removing the background using the mean blanks for the Serum Growth Assay of 2290 WT (Wild Type), -1$\Delta$, and -2$\Delta$, in 0% serum, 50% serum, and 50% heat inactivated (HI) serum.
 
 ```{r time}
-trans_data <- stack(raw_data_clean) %>%
-  mutate(Time = rep(c(1,2,3,4), times = 9))
-colnames(trans_data) [1:2] <- c("OD", "Sample")
+trans_data <- stack(raw_data_clean)
+time_data <- raw_data_colnames %>%
+  select(`Time`)
+length <- length(raw_data_clean)
+time_data <- cbind(rep(time_data$Time, as.numeric(length)))
+trans_data <- cbind(trans_data, time_data)
+colnames(trans_data) <- c("OD", "Sample", "Time")
 ```
 
 # Plots of Cleaned Data
 
-```{r plot 1}
+```{r plots}
 od_600 = expression(paste(OD[600]))
-my.labs <- list("WT", "ppi-1\u0394", "ppi-2\u0394")
 zero_plot <- trans_data %>%
   filter(grepl(" 0%", Sample)) %>%
   ggplot(aes(x = Time, color = Sample, y = OD))+
@@ -105,9 +105,11 @@ zero_plot <- trans_data %>%
   geom_line()+
   labs(title = "0% Serum", y = od_600)+
   theme(plot.title = element_text(hjust = 0.5), legend.title = element_blank())+
-  scale_colour_manual(values = c("#c51b8a","#d95f0e","#2c7fb8"), labels = my.labs)+
+  scale_colour_manual(values = c("#c51b8a","#d95f0e","#2c7fb8"), 
+                      labels = c("WT", "-1\u0394", "-2\u0394"))+
   xlim(0,4)+
-  ylim(-0.1,1)
+  ylim(-0.5,1)
+
 fifty_plot <- trans_data %>%
   filter(grepl(" 50%", Sample)) %>%
   ggplot(aes(x = Time, color = Sample, y = OD))+
@@ -115,9 +117,11 @@ fifty_plot <- trans_data %>%
   geom_line()+
   labs(title = "50% Serum",  y = od_600)+
   theme(plot.title = element_text(hjust = 0.5), legend.title = element_blank())+
-  scale_colour_manual(values = c("#c51b8a","#d95f0e","#2c7fb8"), labels = my.labs)+
+  scale_colour_manual(values = c("#c51b8a","#d95f0e","#2c7fb8"), 
+                      labels = c("WT", "-1\u0394", "-2\u0394"))+
   xlim(0,4)+
-  ylim(-0.1,1)
+  ylim(-0.5,1)
+
 hi_plot <- trans_data %>%
   filter(grepl("HI-50%", Sample)) %>%
   ggplot(aes(x = Time, color = Sample, y = OD))+
@@ -125,9 +129,11 @@ hi_plot <- trans_data %>%
   geom_line()+
   labs(title = "HI-50% Serum", y = od_600)+
   theme(plot.title = element_text(hjust = 0.5), legend.title = element_blank())+
-  scale_colour_manual(values = c("#c51b8a","#d95f0e","#2c7fb8"), labels = my.labs)+
+  scale_colour_manual(values = c("#c51b8a","#d95f0e","#2c7fb8"), 
+                      labels = c("WT", "-1\u0394", "-2\u0394"))+
   xlim(0,4)+
-  ylim(-0.1,1)
+  ylim(-0.5,1)
+
 figure_1 <- ggarrange(zero_plot, fifty_plot, hi_plot,
                     labels = c("A", "B", "C"),
                     ncol = 2, nrow = 2, common.legend = TRUE,legend="bottom")
