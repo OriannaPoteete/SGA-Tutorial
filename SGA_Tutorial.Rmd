@@ -55,7 +55,7 @@ RStudio is a great tool for analyzing your data, but it is very tedious to input
 
 ```{r read file}
 # raw_data <- read_excel(file.choose(), sheet = "Sheet1")
-raw_data <- read_excel("C:/Users/kopot/Desktop/Work/SGA/SGA_2290_WT_-1del_-2del_PC04202022.xlsx", 
+raw_data <- read_excel("C:/Users/kopot/Documents/SGA-Tutorial/SGA_Example_DataSet.xlsx", 
                        sheet = "Sheet1")
 raw_data
 ```
@@ -156,7 +156,7 @@ delta_replace <- gsub("del", "\u0394", colnames(raw_data_clean_t))
 colnames(raw_data_clean_t) <- delta_replace
 
 options(dplyr.width = Inf)
-kable(raw_data_clean_t, caption = "Serum Growth Assay for GN02290", "latex", 
+kable(raw_data_clean_t, caption = "Serum Growth Assay for eOP16", "latex", 
       booktabs = T) %>%
   kable_styling(latex_options = c("striped", "scale_down", "hold_position"))
 ```
@@ -198,7 +198,7 @@ zero_plot <- trans_data %>%
   scale_colour_manual(values = c("#c51b8a","#d95f0e","#2c7fb8"), 
                       labels = c("WT", "-1\u0394", "-2\u0394"))+
   xlim(0,4)+
-  ylim(-0.1,1)
+  ylim(-0.5,1)
 
 fifty_plot <- trans_data %>%
   filter(grepl(" 50%", Sample)) %>%
@@ -210,7 +210,7 @@ fifty_plot <- trans_data %>%
   scale_colour_manual(values = c("#c51b8a","#d95f0e","#2c7fb8"), 
                       labels = c("WT", "-1\u0394", "-2\u0394"))+
   xlim(0,4)+
-  ylim(-0.1,1)
+  ylim(-0.5,1)
 
 hi_plot <- trans_data %>%
   filter(grepl("HI-50%", Sample)) %>%
@@ -222,12 +222,12 @@ hi_plot <- trans_data %>%
   scale_colour_manual(values = c("#c51b8a","#d95f0e","#2c7fb8"), 
                       labels = c("WT", "-1\u0394", "-2\u0394"))+
   xlim(0,4)+
-  ylim(-0.1,1)
+  ylim(-0.5,1)
 
 figure_1 <- ggarrange(zero_plot, fifty_plot, hi_plot,
                     labels = c("A", "B", "C"),
                     ncol = 2, nrow = 2, common.legend = TRUE,legend="bottom")
-annotate_figure(figure_1, top = text_grob("Serum Growth Assay for GN02290", 
+annotate_figure(figure_1, top = text_grob("Serum Growth Assay for eOP16", 
                color = "black", face = "bold", size = 14))
 ```
 
