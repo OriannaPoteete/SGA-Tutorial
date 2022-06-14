@@ -75,7 +75,9 @@ This code chunk will store our data set into a new variable. Whenever you are fo
 raw_data_colnames <- raw_data
 ```
 
-The following code chunk identifies the special characters by their unicode and replaces them with specified text. 
+The following code chunk identifies the special characters by their Unicode and replaces them with specified text. In the accompanying README file we will provide a list of what we believe the most common special characters are and their Unicode.
+
+Here we use $\Delta$ as an example and provide "del" as a suggestion for replacing it.
 
 ```{r, Replacing Special Characters}
 delta_replace <- gsub("\u0394", "del", colnames(raw_data_colnames))
@@ -84,17 +86,19 @@ options(dplyr.width = Inf)
 raw_data_colnames
 ```
 
-* data_replace <- list of new column names
+* delta_replace <- variable that we will store our replace function
 * gsub <- creates a list with the special character replaced by the given text
-    + "\u0394" -- unicode for the special character
-    + "del" -- text that will be replacing the character
-    + colnames() -- the text specifies which dataset the code is changing
+    + "\u0394" -- Unicode for the $\Delta$
+    + "del" -- text that will be replacing $\Delta$
+    + colnames() -- this is a function that will call the column names for the dataframe. This is used to tell gsub where the special characters are to replace.
 * options <- changes with options for knitting the table
     + dplyr.width = Inf -- changes the width of the table to infinity so that the whole table fits on one page
-* raw_data_colnames <- this just displays the changed dataset
+* raw_data_colnames <- this prints the changed dataframe to see if we replaced $\Delta$ in our column names
 
 
 ## Averaging Blank Measurements for Removing Background Noise
+
+Now that we have formatted the
 
 ```{r, second New dataset}
 raw_data_blank_mean <- raw_data_colnames
