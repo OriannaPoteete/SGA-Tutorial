@@ -81,8 +81,11 @@ Here we use $\Delta$ as an example and provide "del" as a suggestion for replaci
 
 ```{r, Replacing Special Characters}
 delta_replace <- gsub("\u0394", "del", colnames(raw_data_colnames))
+
 colnames(raw_data_colnames) <- delta_replace
+
 options(dplyr.width = Inf)
+
 raw_data_colnames
 ```
 
@@ -163,8 +166,10 @@ for (a in 1:ncol(raw_data_clean)) {
 
 Another concept that we introduced here is an index. An index (represented by []) is a way to call specific positions within a list or table. Here, we use [ , a] to call the columns (syntax is [rows, columns]); we'll leave the row section blank so that only the columns are called. In the raw_data_blank_mean, since those values are in a list, we use [a number] to call the position of our blank values in that list; for instance, raw_data_blank_mean[1] is where the blank average for 0% Serum is located.
 
-
 # Printing Our Data
+
+We've now cleaned our data of background noise and now we need to format it for printing to a PDF. This first task will be formatting it to print to a table
+
 ``` {r replace}
 raw_data_clean_t <- raw_data_clean
 
@@ -184,7 +189,7 @@ kable(raw_data_clean_t, caption = "Serum Growth Assay for eOP16", "latex",
     + kable_styling() -- allows for customization of the displayed table
     + latex_options = "" -- customizes the colors and structure of the table
 
-# Transforming the Data
+## Transforming the Data
 
 ```{r time}
 trans_data <- stack(raw_data_clean)
@@ -201,7 +206,7 @@ colnames(trans_data) <- c("OD", "Sample", "Time")
 * cbind() <- combines data by columns
     + rep() -- the data that will be repeated a set number of times
 
-# Graphing Cleaned Data
+## Graphing Cleaned Data
 
 ```{r plots}
 od_600 = expression(paste(OD[600]))
