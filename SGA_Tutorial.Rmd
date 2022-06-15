@@ -98,7 +98,9 @@ raw_data_colnames
 
 ## Averaging Blank Measurements for Removing Background Noise
 
-Now that we have formatted the
+Now that we have formatted our dataframe, we can begin the analysis.First, we need to subtract the background noise from our data.
+
+For each timepoint, we took a measurement of 
 
 ```{r, second New dataset}
 raw_data_blank_mean <- raw_data_colnames
