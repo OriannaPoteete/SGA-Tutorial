@@ -77,7 +77,7 @@ raw_data_colnames <- raw_data
 
 The following code chunk identifies the special characters by their Unicode and replaces them with specified text. In the accompanying README file we will provide a list of what we believe the most common special characters are and their Unicode.
 
-Here we use $\Delta$ as an example and provide "del" as a suggestion for replacing it.
+Here we use $\Delta$ as an example and provide "del" as a suggestion for replacing it. Run the following code chunk and we'll go over what we just ran.
 
 ```{r, Replacing Special Characters}
 delta_replace <- gsub("\u0394", "del", colnames(raw_data_colnames))
@@ -86,25 +86,29 @@ options(dplyr.width = Inf)
 raw_data_colnames
 ```
 
-* delta_replace <- variable that we will store our replace function
-* gsub <- creates a list with the special character replaced by the given text
-    + "\u0394" -- Unicode for the $\Delta$
-    + "del" -- text that will be replacing $\Delta$
-    + colnames() -- this is a function that will call the column names for the dataframe. This is used to tell gsub where the special characters are to replace.
-* options <- changes with options for knitting the table
-    + dplyr.width = Inf -- changes the width of the table to infinity so that the whole table fits on one page
-* raw_data_colnames <- this prints the changed dataframe to see if we replaced $\Delta$ in our column names
+* delta_replace <- Variable that we will store our replace function.
+* gsub <- Creates a list with the special character replaced by the given text.
+    + "\u0394" -- Unicode for the $\Delta$.
+    + "del" -- Text that will be replacing $\Delta$.
+    + colnames() -- This is a function that will call the column names for the dataframe. This is used to tell gsub where the special characters are to replace.
+* options <- Changes with options for knitting the table.
+    + dplyr.width = Inf -- Changes the width of the table to infinity so that the whole table fits on one page.
+* raw_data_colnames <- This prints the changed data frame to see if we replaced $\Delta$ in our column names.
 
 
 ## Averaging Blank Measurements for Removing Background Noise
 
-Now that we have formatted our dataframe, we can begin the analysis.First, we need to subtract the background noise from our data.
+Now that we have formatted our data frame, we can begin the analysis.First, we need to subtract the background noise from our data.
 
-For each timepoint, we took a measurement of 
+For each time point, we took a blank measurement, which is a well that has the serum type but no cells. We use this to determine background noise. Since we took a blank measurement at each time point, we now need to average them. We can do this so long as all of the blank measurements are roughly similar looking (i.e. there are no outliers). Run the next code chunk to create a new variable that we will store the blank values in.
 
 ```{r, second New dataset}
 raw_data_blank_mean <- raw_data_colnames
 ```
+
+This next code chunk will perform what's called "piping", represented by %>%. Piping is a way for RStudio to say "and then" when running code chunks. Before, we wrote single lines of code and when we executed them, RStudio will just run that line and be done. With piping, we can run a line of code, take the results and automatically run them through another line of code. For more information on piping, please visit https://www.datacamp.com/tutorial/pipe-r-tutorial.
+
+Run the following line of code to average your blank measurements and we'll explain what we just did.
 
 ```{r, Averaging Blanks}
 raw_data_blank_mean <- raw_data_colnames %>%
@@ -113,11 +117,11 @@ raw_data_blank_mean <- raw_data_colnames %>%
   round(3)
 ```
 
-* select() <- allows you to pick which columns to use in the code. You can also remove columns by typing a "-" symbol before the column name.
-    + contains("") -- this looks at the titles of the columns and selects the ones that have the inputted value/text within the quotations
-* colMeans() <- this calculates the means for each column
-    + na.rm = TRUE -- this tells it to ignore the NA values
-* round() <- this tells it to what decimal point to round to
+* select() <- Allows you to pick which columns to use from the data frame. You can also remove columns by typing a "-" symbol before the column name (see the next code chunk for an example).
+    + contains("") -- This looks at the titles of the columns and selects the ones that have the inputted value/text within the quotations. Here we are just selecting each column that contains "Blank" in the names.
+* colMeans() <- This calculates the means for each column.
+    + na.rm = TRUE -- This tells the colMeans function to ignore the NA values in the data frame. Note: when you import data from excel, any blank cell will return a "NA".
+* round() <- This tells the output of colMeans what decimal point to round to. Here, we tell it to round to 3 significant figures by inputing 3 as an argument.
 
 ## Removing Blank Measurement from Table
 
