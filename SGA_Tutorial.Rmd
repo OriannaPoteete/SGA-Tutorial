@@ -121,9 +121,11 @@ raw_data_blank_mean <- raw_data_colnames %>%
     + contains("") -- This looks at the titles of the columns and selects the ones that have the inputted value/text within the quotations. Here we are just selecting each column that contains "Blank" in the names.
 * colMeans() <- This calculates the means for each column.
     + na.rm = TRUE -- This tells the colMeans function to ignore the NA values in the data frame. Note: when you import data from excel, any blank cell will return a "NA".
-* round() <- This tells the output of colMeans what decimal point to round to. Here, we tell it to round to 3 significant figures by inputing 3 as an argument.
+* round() <- This tells the output of colMeans what decimal point to round to. Here, we tell it to round to 3 significant figures by inputting 3 as an argument.
 
 ## Removing Blank Measurement from Table
+
+Now that we have our blanks values stored as a variable, we can remove them from our data frame. We'll also be removing the "Time" column to help us with formatting the data for graphing. Run the followign code chunk to do so.
 
 ```{r clean data}
 raw_data_clean <- raw_data_colnames %>%
@@ -132,7 +134,9 @@ raw_data_clean <- raw_data_colnames %>%
 
 ## Removing Background Noise
 
+Here's where things get interesting. We now need to take our measurements and subtract the background noise to get the true measurement values. This is where things get a little complicated. Instead of writing many lines of code to do the subtractions, we can write a for loop to do the math automatically.
 
+A for loop is a way to tell RStudio to iterate through our data, based on conditions we set, and perform an action. A for loop has a beginning and an end, and will never continue after it's ended. Run the following code chunk, then we'll break down all of the different parts.
 
 ```{r for loop}
 for (a in 1:ncol(raw_data_clean)) {
@@ -151,13 +155,16 @@ for (a in 1:ncol(raw_data_clean)) {
 }
 ```
 
-* for(){} <- this codes a conditional statement where for the values specified in the parenthesis it will loop through all the values, running the code specified within the curly brackets. This will stop when it reaches the end of the values
-* if(){} <- this codes a conditional statement of if whatever in the parenthesis is true, then run the code in the curly brackets. If false, then do nothing
-    + grepl() <- this looks for a specific inputted value and returns either TRUE or FALSE
-    + a --
-    + as.numeric() <- this tells it to turn the inputted values into numbers if they are not saved as such
+* for(){} <- This codes a conditional statement where it will loop through the values specified in the parenthesis, running the code specified within the curly brackets. This will stop when it reaches the end (in this case, when it iterates through all of the columns in our data frame).
+* if(){} <- this codes a Boolean (TRUE/FALSE) conditional statement, where if the conditional statement within the parenthesis is TRUE, then it will run the code in the curly brackets. If the conditional statement is FALSE, it will do nothing.
+    + grepl() <- This looks for a specific inputted value and returns either TRUE or FALSE.
+    + a -- This is a variable that the for loop needs in order to loop through our data set. This can really be anything, either a letter, or a word.
+    + as.numeric() <- This makes sure inputted values are seen as numbers by RStudio, if they are not saved as such.
+
+Another concept that we introduced here is an index. An index (represented by []) is a way to call specific positions within a list or table. Here, we use [ , a] to call the columns (syntax is [rows, columns]); we'll leave the row section blank so that only the columns are called. In the raw_data_blank_mean, since those values are in a list, we use [a number] to call the position of our blank values in that list; for instance, raw_data_blank_mean[1] is where the blank average for 0% Serum is located.
 
 
+# Printing Our Data
 ``` {r replace}
 raw_data_clean_t <- raw_data_clean
 
