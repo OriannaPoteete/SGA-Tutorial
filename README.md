@@ -6,16 +6,16 @@ Welcome to the SGA README document! Within this repository, we have a few differ
     + This file contains just the analytical pipeline for the SGA analysis. 
     
 * SGA_Example_DataSet.xlsx
-    + This is an excel file which contains hypothetical sample data for the tutorial document to teach with.
+    + This is an excel file which contains sample data that the authors created for the tutorial document. 
   
 * README.md
-    + This is the document you are currently on, which details what is present, as well as other necessary information.
+    + This is the document you are currently on, which has some additional information that you should read before using this pipeline.
     
 * SGA_Tutorial.Rmd
-    + This document explains and teaches you how to use the SGA pipeline for analyzing data.
+    + This document will explain and teach you how to use the SGA pipeline for analyzing data.
 
 ## Libraries
-Here are the libraries we used, and the code you should use within the consol to download them.
+Here are the libraries we used, and the code you should use within the console to download them. Here we give a brief description of each package and the install command.
 
 ### library(dplyr)
 
@@ -52,7 +52,7 @@ install.packages("viridis")
 
 ### library(ggpubr)
 
-The 'ggplot2' package is excellent and flexible for elegant data visualization in R. However the default generated plots requires some formatting before we can send them for publication. Furthermore, to customize a 'ggplot', the syntax is opaque and this raises the level of difficulty for researchers with no advanced R programming skills. 'ggpubr' provides some easy-to-use functions for creating and customizing 'ggplot2'- based publication ready plots.
+The 'ggplot2' package is excellent and flexible for elegant data visualization in R. However, the default generated plots require some formatting before we can send them for publication. Furthermore, to customize a 'ggplot', the syntax is opaque and this raises the level of difficulty for researchers with little R programming experience. 'ggpubr' provides some easy-to-use functions for creating and customizing 'ggplot2'- based publication ready plots.
 
 install.packages("ggpubr")
 
