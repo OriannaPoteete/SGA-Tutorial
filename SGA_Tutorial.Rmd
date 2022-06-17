@@ -55,7 +55,7 @@ RStudio is a great tool for analyzing your data, but it is very tedious to input
 
 ```{r read file}
 # raw_data <- read_excel(file.choose(), sheet = "Sheet1")
-raw_data <- read_excel("C:/Users/kopot/Documents/SGA-Tutorial/SGA_Example_DataSet.xlsx", 
+raw_data <- read_excel("C:/Users/pbc14/Desktop/Projects_PC11152018/Coding Projects/R Studio/RStudio Tutorials/SGA-Tutorial/SGA_Example_DataSet.xlsx", 
                        sheet = "Sheet1")
 raw_data
 ```
@@ -101,7 +101,7 @@ raw_data_colnames
 
 ## Averaging Blank Measurements for Removing Background Noise
 
-Now that we have formatted our data frame, we can begin the analysis.First, we need to subtract the background noise from our data.
+Now that we have formatted our data frame, we can begin the analysis. First, we need to subtract the background noise from our data.
 
 For each time point, we took a blank measurement, which is a well that has the serum type but no cells. We use this to determine background noise. Since we took a blank measurement at each time point, we now need to average them. We can do this so long as all of the blank measurements are roughly similar looking (i.e. there are no outliers). Run the next code chunk to create a new variable that we will store the blank values in.
 
@@ -118,6 +118,8 @@ raw_data_blank_mean <- raw_data_colnames %>%
   select(contains("Blank")) %>%
   colMeans(na.rm = TRUE) %>%
   round(3)
+
+raw_data_blank_mean
 ```
 
 * select() <- Allows you to pick which columns to use from the data frame. You can also remove columns by typing a "-" symbol before the column name (see the next code chunk for an example).
@@ -128,20 +130,22 @@ raw_data_blank_mean <- raw_data_colnames %>%
 
 ## Removing Blank Measurement from Table
 
-Now that we have our blanks values stored as a variable, we can remove them from our data frame. We'll also be removing the "Time" column to help us with formatting the data for graphing. Run the followign code chunk to do so.
+Now that we have our blanks values stored as a variable, we can remove them from our data frame. We'll also be removing the "Time" column to help us with formatting the data for graphing. Run the following code chunk to do so.
 
 ```{r clean data}
 raw_data_clean <- raw_data_colnames %>%
   select(-`0% (Blank)`, -`50% (Blank)`, -`HI-50% (Blank)`, -`Time`)
+
+raw_data_clean
 ```
 
 ## Removing Background Noise
 
-Here's where things get interesting. We now need to take our measurements and subtract the background noise to get the true measurement values. This is where things get a little complicated. Instead of writing many lines of code to do the subtractions, we can write a for loop to do the math automatically.
+Here's where things get interesting. We now need to take our measurements and subtract the background noise to get the true measurement values. Instead of writing many lines of code to do the subtractions, we can write a for loop to do the math automatically.
 
-A for loop is a way to tell RStudio to iterate through our data, based on conditions we set, and perform an action. A for loop has a beginning and an end, and will never continue after it's ended. Run the following code chunk, then we'll break down all of the different parts.
+A for loop is a way to tell RStudio to cycle through our data, based on conditions we set, and perform an action. A for loop has a beginning and an end, and will never continue after it's ended. Run the following code chunk, then we'll break down all of the different parts.
 
-```{r for loop}
+```{r Subtracting Background Noise}
 for (a in 1:ncol(raw_data_clean)) {
  if (grepl(" 0%", colnames(raw_data_clean)[a])) {
    raw_data_clean[ , a] <- raw_data_clean[ , a] - 
@@ -156,6 +160,8 @@ for (a in 1:ncol(raw_data_clean)) {
      as.numeric(raw_data_blank_mean[3])
  }
 }
+
+raw_data_clean
 ```
 
 * for(){} <- This codes a conditional statement where it will loop through the values specified in the parenthesis, running the code specified within the curly brackets. This will stop when it reaches the end (in this case, when it iterates through all of the columns in our data frame).
@@ -164,52 +170,85 @@ for (a in 1:ncol(raw_data_clean)) {
     + a -- This is a variable that the for loop needs in order to loop through our data set. This can really be anything, either a letter, or a word.
     + as.numeric() <- This makes sure inputted values are seen as numbers by RStudio, if they are not saved as such.
 
-Another concept that we introduced here is an index. An index (represented by []) is a way to call specific positions within a list or table. Here, we use [ , a] to call the columns (syntax is [rows, columns]); we'll leave the row section blank so that only the columns are called. In the raw_data_blank_mean, since those values are in a list, we use [a number] to call the position of our blank values in that list; for instance, raw_data_blank_mean[1] is where the blank average for 0% Serum is located.
+Another concept that we introduced here is an index. An index (represented by []) is a way to call specific positions within a list or table. Here, we use [ , a] to call the columns (syntax for an index in this case is [rows, columns]); we'll leave the row section blank so that only the columns are called. In the raw_data_blank_mean, since those values are in a list, we use [a number] to call the position of our blank values in that list; for instance, raw_data_blank_mean[1] is where the blank average for 0% Serum is located in the list that is raw_data_blank_mean.
 
 # Printing Our Data
 
-We've now cleaned our data of background noise and now we need to format it for printing to a PDF. This first task will be formatting it to print to a table
+We've now cleaned our data of background noise and now we need to format it for printing to a PDF. This first task will be formatting our data frame to print to a table. Then we'll format it again to print the data as a graph.
 
-``` {r replace}
+## Printing a Table
+
+Since we've finished our calculations, we can switch our delta placeholder "del" with the Unicode for $\Delta$. The following code chunk is similar to the one we used to replace $\Delta$, only this time we switched "\u0394" with "del". Run the following code chunk to switch out our "del" for "\u0395".
+
+``` {r Adding Special Characters Back}
 raw_data_clean_t <- raw_data_clean
 
 delta_replace <- gsub("del", "\u0394", colnames(raw_data_clean_t))
 
 colnames(raw_data_clean_t) <- delta_replace
+```
 
+Now, we can create a good looking table using the kable library. The kable library is just an aesthetic package that we use to make our tables more presentable than what RStudio would do. Run the line of code, but be aware that RStudio may not print it out in this markdown; you'll have to knit to PDF in order to adjust the settings.
+
+```{r Formatting Printable Table}
 options(dplyr.width = Inf)
+
 kable(raw_data_clean_t, caption = "Serum Growth Assay for eOP16", "latex", 
       booktabs = T) %>%
   kable_styling(latex_options = c("striped", "scale_down", "hold_position"))
 ```
 
-* kable() <- displays a dataset in a table
-    + caption = "" -- text which appears above the table?
-    + booktabs = T -- changes the way LaTex formats and displays the table
-    + kable_styling() -- allows for customization of the displayed table
-    + latex_options = "" -- customizes the colors and structure of the table
+* kable() <- Displays a dataset in a table format.
+    + caption = "" -- Text which appears above the table.
+    + booktabs = T -- Changes the way LaTex formats and displays the table. LaTex is what RStudio uses to knit to PDF.
+    + kable_styling() -- Allows for customization of the displayed table.
+    + latex_options = "" -- Customizes the colors and structure of the table. You will need to search for commands online to use with latex_options.
 
-## Transforming the Data
+## Printing a Graph
 
-```{r time}
+With the table all set to be printed, it is time to focus on graphing our data. First, however, we'll need to transform our data because ggplot, the library we'll be using, doesn't like to graph data that is wide (i.e. multiple columns). It's hard to explain, so we'll move on to the next section and it will hopefully become more clear.
+
+### Transforming Our Data Frame
+
+If you'll recall from earlier, the data we've been manipulating and analyzing are wide. What this means is that we have many columns and few rows. We need to transform the data frame to a long format, i.e. many rows and few columns.
+
+Once we transform the data, we'll need add another column to our data frame. This column is the time point and will help ggplot organize the data we wish to plot. Run the following code and we'll explain what's happening.
+
+```{r Preparing the Data for Graphing}
 trans_data <- stack(raw_data_clean)
 time_data <- raw_data_colnames %>%
   select(`Time`)
+
+trans_data
+
+time_data
+
 length <- length(raw_data_clean)
+
 time_data <- cbind(rep(time_data$Time, as.numeric(length)))
+
 trans_data <- cbind(trans_data, time_data)
+
 colnames(trans_data) <- c("OD", "Sample", "Time")
+
+trans_data
 ```
 
-* stack() <- stacks multiple columns into one column
-* length() <- the amount of columns in the dataset
-* cbind() <- combines data by columns
-    + rep() -- the data that will be repeated a set number of times
+* stack() <- Stacks multiple columns into one column. This is how we turn the data frame from wide to long.
+* length() <- The counts amount of columns in the dataset. We'll store that number in a variable to use later.
+* cbind() <- Combines data by columns.
+    + rep() -- The data that will be repeated a set number of times. Using rep() within cbind() will allow us to create a data frame (time_data) that has the same number of rows as the data we'd like to graph using the length variable we created earlier.
+* c() -- This is a function that you can use if you need to, for instance, name multiple columns on one line of code. It will prioritize from left to right.
 
-## Graphing Cleaned Data
+### Graphing Cleaned Data
+
+Finally, after transforming the data frame, we can now graph. This next code chunk is quite hefty, but most of it is for the aesthetics of the graphs we'll be printing.
+
+One thing to note before we run this line of code: if you'll look through this code chunk, we'll be printing three graphs. For each serum type, it will need it's own graphing code. The only thing you'll need to change would be the filter, title, and labels. Run the following code chunk to print the graphs of our transformed data and we'll break down what each part of the graphing code does.
 
 ```{r plots}
 od_600 = expression(paste(OD[600]))
+
 zero_plot <- trans_data %>%
   filter(grepl(" 0%", Sample)) %>%
   ggplot(aes(x = Time, color = Sample, y = OD))+
@@ -253,40 +292,56 @@ annotate_figure(figure_1, top = text_grob("Serum Growth Assay for eOP16",
                color = "black", face = "bold", size = 14))
 ```
 
-* expression() <- creates an object
-    + paste() <- chains together vectors after converting them to characters
-* filter() <- this selects which columns to analyze by given parameters
-* ggplot() <- allows the data to be displayed within a plot
-    + aes() -- this is what is used to choose which variables are displayed on different portions of the graph
-    + y = "" -- variable displayed on the y-axis
-    + x = "" -- variable displayed on the x-axis
-    + color = "" -- variable displayed through the colors
-* geom_point() -- this selects a scatterplot as the specific plot
-* goem_line() -- this creates a line between point on the scatterplot
-* labs() -- this labels various potions of the plot
-    + title = "" -- labels the title
-    + y = "" -- labels the y-axis
-* theme() -- customizes non-data portion of the plot
-    + plot.title = "" -- the title of the plot
-    + element_text() -- tells it to look at the variable title and use that?
-    + hjust = 0.5 -- changes the size of the 
-    + legend.title = "" -- alters the legend title
-    + element_blank() -- tells it to exclude the legend title
-* scale_colour_manual() -- customizes the color types and scale of the colors
-    + values = "" -- selects the colors based on their hex number
-    + labels = "" -- labels the legend
-* xlim() -- x axis limits
-* ylim() -- y axis limits
-* ggarrange() <- allows for multiple plots to be displayed at once together
-    + labels = "" -- labels the various plots
-    + ncol = "" -- how many plots are side by side
-    + nrow = "" -- how many plots are up and down
-    + common.legend = TRUE -- this allows for there to be a common legend, or if it was false than the graphs would have seperate legends
-    + legend = "" -- location of the legend in relation to the placement of the graph
-* annotate_figure() <- customizes the plot figure that was created
-    + top = "" -- placement of the figure title
-    + text_grob() -- the text that will show up as the figure title
-    + color = "" -- changes the color of the text
-    + face = "" -- changes the font (i.e. italics, bold, etc.)
-    + size = "" -- size of text
+* expression() <- Creates an object.
+    + paste() <- Chains together vectors after converting them to characters.
+* filter() <- This selects which columns to analyze based on given parameters.
+* ggplot() <- Allows the data to be displayed within a plot.
+    + aes() -- This is what is used to choose which variables are displayed on different portions of the graph.
+    + y = "" -- Variable displayed on the y-axis.
+    + x = "" -- Variable displayed on the x-axis.
+    + color = "" -- Variable displayed through the colors. In this case we've told ggplot to give all samples with the same name the same color.
+* geom_point() -- This selects a scatter plot as the specific plot.
+* goem_line() -- This creates a line between points on the scatter plot.
+* labs() -- This labels various potions of the plot. We can give different variables to this function to manipulate different labels for our graph.
+    + title = "" -- Labels the title of our graph.
+    + y = "" -- Labels the y-axis.
+* theme() -- Customizes the non-data portion of the plot.
+    + plot.title = "" -- The title of the plot. This will allow us to adjust
+    + element_text() -- Allows us to manipulate the text element of the title.
+    + hjust = 0.5 -- Changes the size of the text.
+    + legend.title = "" -- Alters the legend title.
+    + element_blank() -- Tells the element portion of the legend title to be blank. This will exclude the legend title.
+* scale_colour_manual() -- Customizes the color types and scale of the colors.
+    + values = "" -- Selects the colors based on their hex number.
+    + labels = "" -- Labels the legend.
+* xlim() -- x axis limits.
+* ylim() -- y axis limits.
+* ggarrange() <- Allows for multiple plots to be displayed at once together. You can set how they are arranged.
+    + labels = "" -- Labels the various plots.
+    + ncol = "" -- How many plots are side by side.
+    + nrow = "" -- How many plots are up and down.
+    + common.legend = TRUE -- This allows for there to be a common legend, or if it was false than the graphs would have separate legends.
+    + legend = "" -- Location of the legend in relation to the placement of the graph.
+* annotate_figure() <- Customizes the plot figure that was created.
+    + top = "" -- Placement of the figure title.
+    + text_grob() -- The text that will show up as the figure title.
+    + color = "" -- Changes the color of the text.
+    + face = "" -- Changes the font (i.e. italics, bold, etc.).
+    + size = "" -- Sets the size of the text.
+    
+# Citations and Concluding Remarks
+
+This concludes the tutorial for the Serum Growth Assay analysis through RStudio. We hope that this tutorial has been helpful. There is, however, one more code chunk that we need to run. Run the following code chunk to give credit to the wonderful RStudio libraries that we used for our analysis.
+
+```{r Citations}
+citation(package = "dplyr")
+citation(package = "ggplot2")
+citation(package = "tinytex")
+citation(package = "tidyverse")
+citation(package = "readxl")
+citation(package = "viridis")
+citation(package = "ggpubr")
+citation(package = "knitr")
+citation(package = "kableExtra")
+```
 
